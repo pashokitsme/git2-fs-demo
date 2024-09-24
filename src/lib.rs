@@ -3,6 +3,9 @@ use std::path::PathBuf;
 
 pub mod git;
 
+pub use git::Repo;
+pub use git::RepoTree;
+
 #[derive(Debug)]
 pub enum Error {
   Git(git2::Error),
