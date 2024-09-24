@@ -119,7 +119,7 @@ fn read_dir_all(repo: &RepoTree, path: PathBuf) {
     if entry.is_dir {
       read_dir_all(repo, entry.path);
     } else {
-      let _ = Vec::from(repo.0.find_blob(entry.oid).unwrap().content());
+      _ = repo.read_to_vec(entry.path).unwrap();
     }
   }
 }

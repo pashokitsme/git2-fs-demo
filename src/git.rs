@@ -54,11 +54,11 @@ impl Repo {
       true
     })?;
 
-    Ok(
-      tag_oid
-        .ok_or_else(|| git2::Error::new(ErrorCode::NotFound, ErrorClass::Tag, format!("Tag {} not found", tagname)))
-        .and_then(|t| self.0.find_tag(t))?,
-    )
+    let tag = tag_oid
+      .ok_or_else(|| git2::Error::new(ErrorCode::NotFound, ErrorClass::Tag, format!("Tag {} not found", tagname)))
+      .and_then(|t| self.0.find_tag(t))?;
+
+    Ok(tag)
   }
 }
 
@@ -92,7 +92,6 @@ impl ReadOnlyFS for RepoTree<'_> {
       .iter()
       .filter_map(|entry| {
         entry.name().map(|name| DirEntry {
-          oid: entry.id(),
           path: path.as_ref().join(name),
           is_dir: entry.kind().is_some_and(|k| k == ObjectType::Tree),
         })

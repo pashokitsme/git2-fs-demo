@@ -15,18 +15,11 @@ impl From<git2::Error> for Error {
   }
 }
 
-impl Error {
-  fn new(message: &str) -> Self {
-    Self::Any(Box::new(std::io::Error::new(std::io::ErrorKind::Other, message)))
-  }
-}
-
 pub type Result<T> = std::result::Result<T, Error>;
 
 #[derive(Debug)]
 pub struct DirEntry {
   pub path: PathBuf,
-  pub oid: git2::Oid,
   pub is_dir: bool,
 }
 
