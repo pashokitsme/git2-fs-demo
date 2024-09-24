@@ -23,8 +23,17 @@ pub struct DirEntry {
   pub is_dir: bool,
 }
 
+#[derive(Debug)]
+pub struct Stat {
+  pub blob_oid: git2::Oid,
+  pub size: usize,
+  pub is_dir: bool,
+  pub is_binary: bool,
+}
+
 pub trait ReadOnlyFS {
   fn exists(&self, path: impl AsRef<Path>) -> Result<bool>;
+  fn stat(&self, path: impl AsRef<Path>) -> Result<Stat>;
   fn read_dir(&self, path: impl AsRef<Path>) -> Result<Vec<DirEntry>>;
   fn read_to_vec(&self, path: impl AsRef<Path>) -> Result<Vec<u8>>;
   fn read_to_string(&self, path: impl AsRef<Path>) -> Result<String>;

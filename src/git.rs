@@ -71,6 +71,18 @@ impl ReadOnlyFS for RepoTree<'_> {
     }
   }
 
+  fn stat(&self, path: impl AsRef<Path>) -> Result<crate::Stat> {
+    let entry = self.tree.get_path(path.as_ref())?;
+    let blob = self.0.find_blob(entry.id())?;
+
+    Ok(crate::Stat {
+      blob_oid: blob.id(),
+      is_binary: blob.is_binary(),
+      is_dir: entry.kind().is_some_and(|k| k == ObjectType::Tree),
+      size: blob.size(),
+    })
+  }
+
   fn read_dir(&self, path: impl AsRef<Path>) -> Result<Vec<DirEntry>> {
     let tree_object = if path.as_ref().parent().is_none() {
       Some(Cow::Borrowed(&self.tree))
@@ -91,10 +103,9 @@ impl ReadOnlyFS for RepoTree<'_> {
     let paths = tree
       .iter()
       .filter_map(|entry| {
-        entry.name().map(|name| DirEntry {
-          path: path.as_ref().join(name),
-          is_dir: entry.kind().is_some_and(|k| k == ObjectType::Tree),
-        })
+        entry
+          .name()
+          .map(|name| DirEntry { path: path.as_ref().join(name), is_dir: entry.kind().is_some_and(|k| k == ObjectType::Tree) })
       })
       .collect();
     Ok(paths)

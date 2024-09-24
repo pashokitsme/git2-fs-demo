@@ -1,4 +1,3 @@
-
 use std::fs;
 use std::path::Path;
 use std::path::PathBuf;
@@ -55,5 +54,4 @@ fn main() {
   let start = Instant::now();
   list_dir_all(&repo.head().unwrap(), PathBuf::new(), 0);
   eprintln!("list dir time: {:?}", start.elapsed());
-  // read_dir_recursive(&PathBuf::from("gramax-board")).unwrap();
 }
